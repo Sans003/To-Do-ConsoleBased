@@ -16,10 +16,10 @@ namespace To_Do_ConsoleBased
     class ToDoList
     {
 
-        List<ToDoItem> items = JsonHandler.ReadItems();
+        public static List<ToDoItem> items = JsonHandler.ReadItems();
         public string title;
         public int priority;
-        private static string id;
+        public static string id = "*";
 
         public static void MainMenu()
         {
@@ -38,9 +38,11 @@ namespace To_Do_ConsoleBased
                 5. remove all
                 6. exit
                 ");
-                switch (Convert.ToInt32(Console.ReadLine()))
+                char response = Console.ReadLine()[0];
+                Console.WriteLine();
+                switch (response)
                 {
-                    case 1:
+                    case '1':
                         List<ToDoItem> items = JsonHandler.ReadItems();
                         foreach (ToDoItem item in items)
                         {
@@ -48,25 +50,24 @@ namespace To_Do_ConsoleBased
                             Console.WriteLine(@$"
                             Title: {item.Title}
                             Priority: {item.Priority}
-                            Done?: {item.Done}
-                            ");
+                            Done?: {item.Done}");
                             }
                         }
                         Console.ReadLine();
                         break;
-                    case 2:
+                    case '2':
                         createItem();
                         break;
-                    case 3:
+                    case '3':
                         Console.WriteLine("another placeholder");
                         break;
-                    case 4:
+                    case '4':
                         Console.WriteLine("another placeholder");
                         break;
-                    case 5:
-                        JsonHandler.RemoveItems(items);
+                    case '5':
+                        JsonHandler.RemoveItems(id);
                         break;
-                    case 6:
+                    case '6':
                         Environment.Exit(0);
                         break;
                     default:

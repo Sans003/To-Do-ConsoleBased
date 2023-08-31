@@ -18,7 +18,14 @@ namespace To_Do_ConsoleBased
             if (File.Exists(JsonFileName))
             {
                 string json = File.ReadAllText(JsonFileName);
-                items = JsonConvert.DeserializeObject<List<ToDoItem>>(json);
+                if (!String.IsNullOrEmpty(json))
+                {
+                    items = JsonConvert.DeserializeObject<List<ToDoItem>>(json);
+                }
+                else
+                {
+                    items = new List<ToDoItem>();
+                }
             }
             else
             {
@@ -32,11 +39,14 @@ namespace To_Do_ConsoleBased
             string json = JsonConvert.SerializeObject(items, Formatting.Indented);
             File.WriteAllText(JsonFileName, json);
         }
-        public static void RemoveItems(List<ToDoItem> items, string id = "*")
+        public static void RemoveItems(string id = "*")
         {
+            List<ToDoItem> items = ReadItems();
             if (id == "*")
             {
+                Console.WriteLine("true");
                 File.WriteAllText(JsonFileName, "");
+
             }
             else
             {
@@ -48,8 +58,6 @@ namespace To_Do_ConsoleBased
                     }
                 }
             }
-            string json = JsonConvert.SerializeObject(items, Formatting.Indented);
-            File.WriteAllText(JsonFileName, json);
         }
     }
     internal class ToDoItem
