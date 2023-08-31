@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
 using To_Do_ConsoleBased;
 
-namespace ToDoConsoleBased
+namespace To_Do_ConsoleBased
 {
     class Program
     {
@@ -14,8 +15,12 @@ namespace ToDoConsoleBased
     }
     class ToDoList
     {
+
+        List<ToDoItem> items = JsonHandler.ReadItems();
         public string title;
         public int priority;
+        private static string id;
+
         public static void MainMenu()
         {
             while (true)
@@ -28,13 +33,26 @@ namespace ToDoConsoleBased
 
                 1. list existing to do items
                 2. create new item
-                3. delete existing item
-                4. exit
+                3. remove existing item
+                4. edit existing item
+                5. remove all
+                6. exit
                 ");
                 switch (Convert.ToInt32(Console.ReadLine()))
                 {
                     case 1:
-                        Console.WriteLine("placeholder");
+                        List<ToDoItem> items = JsonHandler.ReadItems();
+                        foreach (ToDoItem item in items)
+                        {
+                            if (item.Done == false) { 
+                            Console.WriteLine(@$"
+                            Title: {item.Title}
+                            Priority: {item.Priority}
+                            Done?: {item.Done}
+                            ");
+                            }
+                        }
+                        Console.ReadLine();
                         break;
                     case 2:
                         createItem();
@@ -43,6 +61,12 @@ namespace ToDoConsoleBased
                         Console.WriteLine("another placeholder");
                         break;
                     case 4:
+                        Console.WriteLine("another placeholder");
+                        break;
+                    case 5:
+                        JsonHandler.RemoveItems(items);
+                        break;
+                    case 6:
                         Environment.Exit(0);
                         break;
                     default:
@@ -56,26 +80,26 @@ namespace ToDoConsoleBased
             Console.WriteLine("What do you want to do?");
             string title = Console.ReadLine();
             Console.WriteLine($"What priority does '{title}' have? (1-3)");
-            var choice = Console.ReadLine();
-            bool priorityCheck = false;
-            int priority = 0;
-            while (priorityCheck == false) {
-                switch (choice)
-                {
-                    case "1":
-                    case "2":
-                    case "3":
-                        priority = Convert.ToInt32(choice);
-                        priorityCheck = true;
-                        break;
-                    default:
-                        Console.WriteLine("please enter a valid integer.");
-                        choice = Console.ReadLine();
-                        break;
-                    }
-            JsonHandler jsonItem = new(title, priority);
-            }
+            int priority = GetValidPriority();
 
+            List<ToDoItem> items = JsonHandler.ReadItems();
+            items.Add(new ToDoItem { Title = title, Priority = priority, Done = false });
+            JsonHandler.WriteItems(items);
+            Console.WriteLine($"Created '{title}' with priority {priority}.");
+        }
+
+        public static int GetValidPriority()
+        {
+            int priority;
+            while (true)
+            {
+                if (int.TryParse(Console.ReadLine(), out priority) && priority >= 1 && priority <= 3)
+                {
+                    break;
+                }
+                Console.WriteLine("Please enter a valid priority (1-3).");
+            }
+            return priority;
         }
     }
 }
