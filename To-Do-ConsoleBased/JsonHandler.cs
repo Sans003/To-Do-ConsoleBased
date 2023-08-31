@@ -45,24 +45,26 @@ namespace To_Do_ConsoleBased
             if (id == "*")
             {
                 Console.WriteLine("true");
+                Console.ReadLine();
                 File.WriteAllText(JsonFileName, "");
 
             }
             else
+            foreach (ToDoItem item in items)
             {
-                foreach (ToDoItem item in items)
+                if (item.ID == int.Parse(id))
                 {
-                    if (item.ID == id)
-                    {
-                        items.Remove(item);
-                    }
+                    items.Remove(item);
+                    string json = JsonConvert.SerializeObject(items, Formatting.Indented);
+                    File.WriteAllText(JsonFileName, json);
+                    break;
                 }
             }
         }
     }
     internal class ToDoItem
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
         public string Title { get; set; }
         public int Priority { get; set; }
         public bool Done { get; set; }

@@ -20,6 +20,7 @@ namespace To_Do_ConsoleBased
         public string title;
         public int priority;
         public static string id = "*";
+        
 
         public static void MainMenu()
         {
@@ -46,8 +47,10 @@ namespace To_Do_ConsoleBased
                         List<ToDoItem> items = JsonHandler.ReadItems();
                         foreach (ToDoItem item in items)
                         {
-                            if (item.Done == false) { 
-                            Console.WriteLine(@$"
+                            if (item.Done == false)
+                            {
+                                Console.WriteLine(@$"
+                            ID: {item.ID}
                             Title: {item.Title}
                             Priority: {item.Priority}
                             Done?: {item.Done}");
@@ -59,7 +62,7 @@ namespace To_Do_ConsoleBased
                         createItem();
                         break;
                     case '3':
-                        Console.WriteLine("another placeholder");
+                        removeItem();
                         break;
                     case '4':
                         Console.WriteLine("another placeholder");
@@ -76,15 +79,25 @@ namespace To_Do_ConsoleBased
                 }
             }
         }
+        public static void removeItem()
+        {
+            List<ToDoItem> items = JsonHandler.ReadItems();
+            Console.WriteLine("Which item would you like to remove, please enter the id");
+            JsonHandler.RemoveItems(Console.ReadLine());
+        }
         public static void createItem()
         {
+            int veryCoolId = 0;
+            List<ToDoItem> items = JsonHandler.ReadItems();
             Console.WriteLine("What do you want to do?");
             string title = Console.ReadLine();
             Console.WriteLine($"What priority does '{title}' have? (1-3)");
             int priority = GetValidPriority();
-
-            List<ToDoItem> items = JsonHandler.ReadItems();
-            items.Add(new ToDoItem { Title = title, Priority = priority, Done = false });
+            if (items.Count > 0 )
+            {
+                veryCoolId = items.Max(x => x.ID) + 1;
+            }
+            items.Add(new ToDoItem { ID = veryCoolId, Title = title, Priority = priority, Done = false });
             JsonHandler.WriteItems(items);
             Console.WriteLine($"Created '{title}' with priority {priority}.");
         }
