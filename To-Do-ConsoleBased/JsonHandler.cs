@@ -44,8 +44,6 @@ namespace To_Do_ConsoleBased
             List<ToDoItem> items = ReadItems();
             if (id == "*")
             {
-                Console.WriteLine("true");
-                Console.ReadLine();
                 File.WriteAllText(JsonFileName, "");
 
             }

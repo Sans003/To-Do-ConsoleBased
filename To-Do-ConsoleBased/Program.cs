@@ -13,6 +13,7 @@ namespace To_Do_ConsoleBased
             ToDoList.MainMenu();
         }
     }
+
     class ToDoList
     {
 
@@ -20,74 +21,113 @@ namespace To_Do_ConsoleBased
         public string title;
         public int priority;
         public static string id = "*";
-        
+
 
         public static void MainMenu()
         {
             while (true)
             {
+                List<ToDoItem> items = JsonHandler.ReadItems();
                 Console.Clear();
                 Console.Write(@"
                 Welcome to your personal To-Do-List!
-
+                ");
+                foreach (ToDoItem item in items)
+                {
+                    if (item.Done == false)
+                    {
+                        Console.WriteLine(@$"
+                        ID: {item.ID}
+                        Title: {item.Title}
+                        Priority: {item.Priority}
+                        Done?: {item.Done}"
+                        );
+                    }
+                };
+                Console.Write(@"
                 select from the following actions:
 
-                1. list existing to do items
-                2. create new item
-                3. remove existing item
-                4. edit existing item
-                5. remove all
-                6. exit
+                1. create new item
+                2. remove existing item     syntax: 2 <ItemID> or * for all
+                3. edit existing item       syntax: 3 <ItemID> <ItemAttribute> (Attributes: name, priority, state)
+                4. exit                                 
                 ");
-                char response = Console.ReadLine()[0];
-                Console.WriteLine();
-                switch (response)
+                string? input = Console.ReadLine();
+                if (input.Length > 1 && input[0] == '2' || input[0] == '3')
                 {
-                    case '1':
-                        List<ToDoItem> items = JsonHandler.ReadItems();
-                        foreach (ToDoItem item in items)
-                        {
-                            if (item.Done == false)
-                            {
-                                Console.WriteLine(@$"
-                            ID: {item.ID}
-                            Title: {item.Title}
-                            Priority: {item.Priority}
-                            Done?: {item.Done}");
-                            }
-                        }
-                        Console.ReadLine();
-                        break;
-                    case '2':
-                        createItem();
-                        break;
-                    case '3':
-                        removeItem();
-                        break;
-                    case '4':
-                        Console.WriteLine("another placeholder");
-                        break;
-                    case '5':
-                        JsonHandler.RemoveItems(id);
-                        break;
-                    case '6':
-                        Environment.Exit(0);
+                    string arguments = input[2..];
+                    char response = input[0];
+                    Console.WriteLine();
+                    switch (response)
+                    {
+                        case '2':
+                            removeItem(arguments);
+                            break;
+                        case '3':
+                            editItem(arguments);
+                            break;
+                        case '4':
+                            Environment.Exit(1);
+                            break;
+                        default:
+                            Console.WriteLine("no statement please try again");
+                            break;
+                    }
+                }
+                else if (input.Length == 1 && input[0] == '1')
+                {
+                    char response = input[0];
+                    switch (response)
+                    {
+                        case '1':
+                            createItem();
+                            break;
+                        default:
+                            Console.WriteLine("no statement please try again");
+                            break;
+                    }
+                }
+                else if (input.Length == 1 && input[0] == '4')
+                {
+                    char response = input[0];
+                    switch (response) 
+                    { 
+                        case '4':
+                        Environment.Exit(1);
                         break;
                     default:
                         Console.WriteLine("no statement please try again");
                         break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Error: no argument has been given");
                 }
             }
         }
-        public static void removeItem()
+
+        private static void editItem(string arguments)
         {
-            List<ToDoItem> items = JsonHandler.ReadItems();
-            Console.WriteLine("Which item would you like to remove, please enter the id\n(multi removal possible example '1 2 3')");
-            string[] removalItems = Console.ReadLine().Split();
-            foreach (string item in removalItems)
+            throw new NotImplementedException();
+        }
+
+        public static void removeItem(string arguments)
+        {
+            string[] args = arguments.Split();
+            foreach (string arg in args)
             {
-                JsonHandler.RemoveItems(item);
+                char argg = char.Parse(arg);
+                if (argg == '*')
+                {
+                    JsonHandler.RemoveItems();
+                }
+                else if (char.IsDigit(argg))
+                {
+                    JsonHandler.RemoveItems(Convert.ToString(argg));
+                }
             }
+            
         }
         public static void createItem()
         {
@@ -106,18 +146,5 @@ namespace To_Do_ConsoleBased
             Console.WriteLine($"Created '{title}' with priority {priority}.");
         }
 
-        public static int GetValidPriority()
-        {
-            int priority;
-            while (true)
-            {
-                if (int.TryParse(Console.ReadLine(), out priority) && priority >= 1 && priority <= 3)
-                {
-                    break;
-                }
-                Console.WriteLine("Please enter a valid priority (1-3).");
-            }
-            return priority;
-        }
     }
 }
