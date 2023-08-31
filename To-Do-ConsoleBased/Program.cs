@@ -82,8 +82,12 @@ namespace To_Do_ConsoleBased
         public static void removeItem()
         {
             List<ToDoItem> items = JsonHandler.ReadItems();
-            Console.WriteLine("Which item would you like to remove, please enter the id");
-            JsonHandler.RemoveItems(Console.ReadLine());
+            Console.WriteLine("Which item would you like to remove, please enter the id\n(multi removal possible example '1 2 3')");
+            string[] removalItems = Console.ReadLine().Split();
+            foreach (string item in removalItems)
+            {
+                JsonHandler.RemoveItems(item);
+            }
         }
         public static void createItem()
         {
