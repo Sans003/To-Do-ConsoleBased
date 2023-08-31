@@ -44,7 +44,7 @@ namespace To_Do_ConsoleBased
                         );
                     }
                 };
-                Console.Write(@"
+                Console.Write(@" 
                 select from the following actions:
 
                 1. create new item
